@@ -1,0 +1,55 @@
+package game.gugudan;
+
+class Solution1 {
+    /**
+     do369 함수를 이용하여 playNames의 유저가 돌아가면서,
+     maxGameCount까지 진행하도록 구현
+     각 유저는 본인의 차례때 '이름: 답변'을 출력한다.
+     예) playerNames = {"영수", "광수", "영철", "상철"} maxGameCount = 100 이 입력된경우
+     영수: 1
+     광수: 2
+     영철: clap
+     상철: 4
+     ..중략..
+     상철: 100
+     */
+    public String solution(String[] playerNames, int maxGameCount) {
+        StringBuilder answer = new StringBuilder();
+        int playerCount = playerNames.length;
+
+        for (int index = 1; index <= maxGameCount; index++) {
+            String player = getPlayerName(playerNames, index, playerCount);
+            String result = do369(index);
+            createResult(answer, player, result);
+        }
+
+        return answer.toString();
+    }
+
+    /**
+     number 에 3,6,9가 들어 있으면 "clap" 을 리턴
+     그렇지 않으면 숫자를 string으로 변환하여 리턴
+     메소드 시그니처를 변경하지 마세요.
+     */
+    private String do369(int number) {
+        if (contains369(number)) {
+            return "clap";
+        } else {
+            return String.valueOf(number);
+        }
+    }
+
+    private static String getPlayerName(String[] playerNames, int i, int playerCount) {
+        return playerNames[(i - 1) % playerCount];
+    }
+
+    private boolean contains369(int number) {
+        String numberStr = String.valueOf(number);
+        return numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9");
+    }
+
+    private void createResult(StringBuilder answer, String player, String result) {
+        answer.append(player).append(": ")
+                .append(result).append("\n");
+    }
+}
