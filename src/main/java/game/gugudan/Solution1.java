@@ -53,10 +53,9 @@ class Solution1 {
     }
 
     // String.format 사용 -> 코드의 명확성 향상
-    private void createResult(StringBuilder answer, String player, String result) {
-        answer.append(
-                String.format("%s: %s\n", player, result)
-        );
+    private void createResult(StringBuilder answer, String player, String gameResult) {
+        String formattedResult = String.format("%s: %s\n", player, gameResult);
+        answer.append(formattedResult);
     }
 
 
