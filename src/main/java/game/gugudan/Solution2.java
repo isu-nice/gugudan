@@ -7,6 +7,8 @@ public class Solution2 {
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
         List<Player> players = createPlayers(playerNames, errorRates);
+
+        //playerNames, errorRates 를 사용하여 players 만드는 코드를 작성해주세요.
         Random random = new Random(maxGameCount, randomValues);
 
         return playGame(players, maxGameCount, random);
@@ -24,6 +26,10 @@ public class Solution2 {
 
     private String playGame(List<Player> players, int maxGameCount, Random random) {
         StringBuilder answer = new StringBuilder();
+        //players 가 돌아가면서 자신의 오답율에 따라 응답하고
+        //(오답을 계산시는 제공되는 random 함수를 사용해주세요.)
+        //모두가 정답을 얘기하는경우 maxGameCount까지 게임을 진행
+
         int playerCount = players.size();
 
         for (int i = 1; i <= maxGameCount; i++) {
@@ -55,6 +61,7 @@ public class Solution2 {
     }
 
     private String do369(int number) {
+        //1번 문제에서 구현한 내용과 동일하게 작성해주세요.
         String numberStr = String.valueOf(number);
         if (numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9")) {
             return "clap";
@@ -104,6 +111,9 @@ public class Solution2 {
             this.randomValues = randomValues;
         }
 
+        /**
+         * 0~99까지의 값을 리턴하는 함수 각 숫자는 모두 나올 확율이 같다고 가정하면 된다.
+         */
         public int getNextInt() {
             return randomValues[currentCount++];
         }
