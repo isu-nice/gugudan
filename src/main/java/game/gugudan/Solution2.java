@@ -1,6 +1,8 @@
 package game.gugudan;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -122,5 +124,32 @@ public class Solution2 {
         public int getNextInt() {
             return randomValues[currentCount++];
         }
+    }
+
+
+
+
+    // main
+    public static void main(String[] args) {
+        // 테스트
+        String[] playerNames = {"가", "나나", "다다다", "라라라", "마마마마마"};
+        int[] errorRates = {0, 8, 19, 0, 0};
+        int maxGameCount = 100;
+        int[] randomValues = generateRandomValues();
+
+        Solution2 solution = new Solution2();
+        String result = solution.solution(playerNames, errorRates, maxGameCount, randomValues);
+        System.out.println(result);
+    }
+
+    private static int[] generateRandomValues() {
+        List<Integer> allValues =
+                new ArrayList<>(IntStream.range(0, 100).boxed().toList());
+
+        Collections.shuffle(allValues);
+
+        return allValues.stream()
+                .mapToInt(Integer::intValue)
+                .toArray();
     }
 }
