@@ -6,6 +6,7 @@ import java.util.List;
 public class Solution3 {
 
     private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final String CLAP_RESPONSE = "clap";
 
     public String solution(String region, String[] playerNames, int maxGameCount) {
         GameRule gameRule = selectGameRule(region);
@@ -58,12 +59,18 @@ public class Solution3 {
     static class SeoulGameRule implements GameRule {
         @Override
         public String do369(int number) {
-            String numberStr = String.valueOf(number);
-            if (numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9")) {
-                return "clap";
+            if (contains369(number)) {
+                return CLAP_RESPONSE;
             } else {
-                return numberStr;
+                return String.valueOf(number);
             }
+        }
+
+        private boolean contains369(int number) {
+            return String.valueOf(number)
+                    .chars()
+                    .mapToObj(ch -> (char) ch)
+                    .anyMatch(CLAP_DIGITS::contains);
         }
     }
 
