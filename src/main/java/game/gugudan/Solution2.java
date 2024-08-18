@@ -36,7 +36,7 @@ public class Solution2 {
             String expectedAnswer = do369(index);
             String playerAnswer = processPlayerTurn(currentPlayer, index, expectedAnswer, random);
 
-            buildResult(answer, currentPlayer, playerAnswer);
+            createResult(answer, currentPlayer, playerAnswer);
 
             // 오답 시 게임 종료
             if (!expectedAnswer.equals(playerAnswer)) {
@@ -70,8 +70,9 @@ public class Solution2 {
         return player.respond(number, expectedAnswer, random);
     }
 
-    private void buildResult(StringBuilder answer, Player player, String result) {
-        answer.append(player.getName()).append(": ").append(result).append("\n");
+    private void createResult(StringBuilder answer, Player player, String result) {
+        String formattedResult = String.format("%s: %s\n", player.getName(), result);
+        answer.append(formattedResult);
     }
 
     static class Player {
