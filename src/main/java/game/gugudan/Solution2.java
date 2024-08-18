@@ -1,9 +1,12 @@
 package game.gugudan;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
 public class Solution2 {
+
+    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
         //playerNames, errorRates 를 사용하여 players 만드는 코드를 작성해주세요.
@@ -43,16 +46,8 @@ public class Solution2 {
         return answer.toString();
     }
 
-    private Player getCurrentPlayer(List<Player> players, int turnIndex, int playerCount) {
-        return players.get((turnIndex - 1) % playerCount);
-    }
-
-    private String processPlayerTurn(Player player, int number, String expectedAnswer, Random random) {
-        return player.respond(number, expectedAnswer, random);
-    }
-
-    private void buildResult(StringBuilder answer, Player player, String result) {
-        answer.append(player.getName()).append(": ").append(result).append("\n");
+    private Player getCurrentPlayer(Player[] players, int turnIndex, int playerCount) {
+        return players[(turnIndex - 1) % playerCount];
     }
 
     private String do369(int number) {
@@ -66,8 +61,16 @@ public class Solution2 {
     private boolean contains369(int number) {
         return String.valueOf(number)
                 .chars()
-                .mapToObj(c -> (char) c)
-                .anyMatch(ch -> ch == '3' || ch == '6' || ch == '9');
+                .mapToObj(ch -> (char) ch)
+                .anyMatch(CLAP_DIGITS::contains);
+    }
+
+    private String processPlayerTurn(Player player, int number, String expectedAnswer, Random random) {
+        return player.respond(number, expectedAnswer, random);
+    }
+
+    private void buildResult(StringBuilder answer, Player player, String result) {
+        answer.append(player.getName()).append(": ").append(result).append("\n");
     }
 
     static class Player {
