@@ -14,6 +14,7 @@ public class Solution3 {
         return playGame(players, maxGameCount, gameRule);
     }
 
+    // switch 활용
     private GameRule selectGameRule(String region) {
         return switch (region) {
             case "서울" -> new SeoulGameRule();
@@ -30,15 +31,19 @@ public class Solution3 {
 
     private String playGame(Player[] players, int maxGameCount, GameRule gameRule) {
         StringBuilder answer = new StringBuilder();
-        int playerCount = players.length;
 
-        for (int i = 1; i <= maxGameCount; i++) {
-            Player currentPlayer = players[(i - 1) % playerCount];
-            String result = gameRule.processNumber(i);
+        for (int index = 1; index <= maxGameCount; index++) {
+            Player currentPlayer = getCurrentPlayer(players, index);
+            String result = gameRule.processNumber(index);
             createResult(answer, currentPlayer, result);
         }
 
         return answer.toString();
+    }
+
+    private Player getCurrentPlayer(Player[] players, int turnIndex) {
+        int playerCount = players.length;
+        return players[(turnIndex - 1) % playerCount];
     }
 
     private void createResult(StringBuilder answer, Player currentPlayer, String result) {
