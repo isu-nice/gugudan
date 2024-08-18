@@ -47,9 +47,9 @@ public class Solution3 {
         return players[(turnIndex - 1) % playerCount];
     }
 
-    private void createResult(StringBuilder answer, Player currentPlayer, String result) {
-        answer.append(currentPlayer.getName()).append(": ")
-                .append(result).append("\n");
+    private void createResult(StringBuilder answer, Player player, String result) {
+        String formattedResult = String.format("%s: %s\n", player.getName(), result);
+        answer.append(formattedResult);
     }
 
     interface GameRule {
