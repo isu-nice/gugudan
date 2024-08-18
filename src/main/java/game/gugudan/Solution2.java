@@ -1,27 +1,24 @@
 package game.gugudan;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Solution2 {
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
-        List<Player> players = createPlayers(playerNames, errorRates);
-
         //playerNames, errorRates 를 사용하여 players 만드는 코드를 작성해주세요.
+        List<Player> players = createPlayers(playerNames, errorRates);
         Random random = new Random(maxGameCount, randomValues);
 
         return playGame(players, maxGameCount, random);
     }
 
+    // Stream API 사용
     private List<Player> createPlayers(String[] playerNames, int[] errorRates) {
-        List<Player> players = new ArrayList<>();
-
-        for (int i = 0; i < playerNames.length; i++) {
-            players.add(new Player(playerNames[i], errorRates[i]));
-        }
-
-        return players;
+        return IntStream.range(0, playerNames.length)
+                .mapToObj(index -> new Player(playerNames[index], errorRates[index]))
+                .collect(Collectors.toList());
     }
 
     private String playGame(List<Player> players, int maxGameCount, Random random) {
