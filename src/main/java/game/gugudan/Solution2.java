@@ -1,33 +1,31 @@
 package game.gugudan;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Solution2 {
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
         //playerNames, errorRates 를 사용하여 players 만드는 코드를 작성해주세요.
-        List<Player> players = createPlayers(playerNames, errorRates);
-        Random random = new Random(maxGameCount, randomValues);
+        Player[] players = createPlayers(playerNames, errorRates);
 
+        Random random = new Random(maxGameCount, randomValues);
         return playGame(players, maxGameCount, random);
     }
 
     // Stream API 사용
-    private List<Player> createPlayers(String[] playerNames, int[] errorRates) {
+    private Player[] createPlayers(String[] playerNames, int[] errorRates) {
         return IntStream.range(0, playerNames.length)
                 .mapToObj(index -> new Player(playerNames[index], errorRates[index]))
-                .collect(Collectors.toList());
+                .toArray(Player[]::new);
     }
 
-    private String playGame(List<Player> players, int maxGameCount, Random random) {
+    private String playGame(Player[] players, int maxGameCount, Random random) {
         StringBuilder answer = new StringBuilder();
         //players 가 돌아가면서 자신의 오답율에 따라 응답하고
-        //(오답을 계산시는 제공되는 random 함수를 사용해주세요.)
+        //(오답율 계산 시에는 제공되는 random 함수를 사용해주세요.)
         //모두가 정답을 얘기하는경우 maxGameCount까지 게임을 진행
-
-        int playerCount = players.size();
+        int playerCount = players.length;
 
         for (int i = 1; i <= maxGameCount; i++) {
             Player currentPlayer = getCurrentPlayer(players, i, playerCount);
@@ -58,13 +56,18 @@ public class Solution2 {
     }
 
     private String do369(int number) {
-        //1번 문제에서 구현한 내용과 동일하게 작성해주세요.
-        String numberStr = String.valueOf(number);
-        if (numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9")) {
+        if (contains369(number)) {
             return "clap";
         } else {
-            return numberStr;
+            return String.valueOf(number);
         }
+    }
+
+    private boolean contains369(int number) {
+        return String.valueOf(number)
+                .chars()
+                .mapToObj(c -> (char) c)
+                .anyMatch(ch -> ch == '3' || ch == '6' || ch == '9');
     }
 
     static class Player {
