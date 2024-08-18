@@ -1,6 +1,12 @@
 package game.gugudan;
 
+import java.util.Arrays;
+import java.util.List;
+
 class Solution1 {
+
+    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+
     /**
      * do369 함수를 이용하여 playNames의 유저가 돌아가면서,
      * maxGameCount까지 진행하도록 구현
@@ -48,8 +54,8 @@ class Solution1 {
     private boolean contains369(int number) {
         return String.valueOf(number)
                 .chars()
-                .mapToObj(c -> (char) c)
-                .anyMatch(ch -> ch == '3' || ch == '6' || ch == '9');
+                .mapToObj(ch -> (char) ch)
+                .anyMatch(CLAP_DIGITS::contains);
     }
 
     // String.format 사용 -> 코드의 명확성 향상
