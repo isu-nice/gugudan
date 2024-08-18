@@ -1,8 +1,13 @@
 package game.gugudan;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Solution4 {
+
+    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final String CLAP_RESPONSE = "clap";
 
     public int solution(String[] playerNames, int maxGameCount) {
         //주어진 clapCounter 를 사용해주세요.
@@ -27,53 +32,6 @@ public class Solution4 {
         return clapCounter.getCount();
     }
 
-    interface GameRule {
-        String processNumber(int number);
-    }
-
-    class SeoulGameRule implements GameRule {
-        @Override
-        public String processNumber(int number) {
-            String numberStr = String.valueOf(number);
-            if (numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9")) {
-                return "clap";
-            } else {
-                return numberStr;
-            }
-        }
-    }
-
-    class BusanGameRule implements GameRule {
-        @Override
-        public String processNumber(int number) {
-            String numberStr = String.valueOf(number);
-            int clapCount = 0;
-
-            for (char ch : numberStr.toCharArray()) {
-                if (ch == '3' || ch == '6' || ch == '9') {
-                    clapCount++;
-                }
-            }
-
-            if (clapCount > 0) {
-                return "clap".repeat(clapCount);
-            } else {
-                return numberStr;
-            }
-        }
-    }
-
-    static class Player {
-        private String name;
-
-        public Player(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
-    }
 
     static class GameRunner implements Runnable {
         private String[] playerNames;
@@ -94,7 +52,7 @@ public class Solution4 {
 
             for (int i = 1; i <= maxGameCount; i++) {
                 String playerName = playerNames[(i - 1) % playerCount];
-                String result = gameRule.processNumber(i);
+                String result = gameRule.do369(i);
 
                 if (result.contains("clap")) {
                     int claps = (int) result.chars()
@@ -128,6 +86,62 @@ public class Solution4 {
 
         public synchronized void increment(int amount) {
             count.addAndGet(amount);
+        }
+    }
+
+    interface GameRule {
+        String do369(int number);
+    }
+
+    static class SeoulGameRule implements Solution3.GameRule {
+        @Override
+        public String do369(int number) {
+            if (contains369(number)) {
+                return CLAP_RESPONSE;
+            } else {
+                return String.valueOf(number);
+            }
+        }
+
+        private boolean contains369(int number) {
+            return String.valueOf(number)
+                    .chars()
+                    .mapToObj(ch -> (char) ch)
+                    .anyMatch(CLAP_DIGITS::contains);
+        }
+    }
+
+    static class BusanGameRule implements Solution3.GameRule {
+        @Override
+        public String do369(int number) {
+            int clapCount = computeClapCount(number);
+
+            if (clapCount > 0) {
+                return CLAP_RESPONSE.repeat(clapCount);
+            } else {
+                return String.valueOf(number);
+            }
+        }
+
+        private static int computeClapCount(int number) {
+            long clapCount = String.valueOf(number)
+                    .chars()
+                    .mapToObj(ch -> (char) ch)
+                    .filter(CLAP_DIGITS::contains)
+                    .count();
+            return (int) clapCount;
+        }
+    }
+
+    static class Player {
+        private String name;
+
+        public Player(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
         }
     }
 }
