@@ -34,8 +34,8 @@ public class Solution3 {
 
         for (int index = 1; index <= maxGameCount; index++) {
             Player currentPlayer = getCurrentPlayer(players, index);
-            String result = gameRule.processNumber(index);
-            createResult(answer, currentPlayer, result);
+            String playerAnswer = gameRule.do369(index);
+            createResult(answer, currentPlayer, playerAnswer);
         }
 
         return answer.toString();
@@ -52,12 +52,12 @@ public class Solution3 {
     }
 
     interface GameRule {
-        String processNumber(int number);
+        String do369(int number);
     }
 
-    class SeoulGameRule implements GameRule {
+    static class SeoulGameRule implements GameRule {
         @Override
-        public String processNumber(int number) {
+        public String do369(int number) {
             String numberStr = String.valueOf(number);
             if (numberStr.contains("3") || numberStr.contains("6") || numberStr.contains("9")) {
                 return "clap";
@@ -67,9 +67,9 @@ public class Solution3 {
         }
     }
 
-    class BusanGameRule implements GameRule {
+    static class BusanGameRule implements GameRule {
         @Override
-        public String processNumber(int number) {
+        public String do369(int number) {
             String numberStr = String.valueOf(number);
 
             int clapCount = 0;
