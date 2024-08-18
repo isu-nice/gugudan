@@ -31,10 +31,9 @@ public class Solution2 {
         //players 가 돌아가면서 자신의 오답율에 따라 응답하고
         //(오답율 계산 시에는 제공되는 random 함수를 사용해주세요.)
         //모두가 정답을 얘기하는경우 maxGameCount까지 게임을 진행
-        int playerCount = players.length;
 
         for (int index = 1; index <= maxGameCount; index++) {
-            Player currentPlayer = getCurrentPlayer(players, index, playerCount);
+            Player currentPlayer = getCurrentPlayer(players, index);
             String expectedAnswer = do369(index);
             String playerAnswer = processPlayerTurn(currentPlayer, index, expectedAnswer, random);
 
@@ -49,7 +48,8 @@ public class Solution2 {
         return answer.toString();
     }
 
-    private Player getCurrentPlayer(Player[] players, int turnIndex, int playerCount) {
+    private Player getCurrentPlayer(Player[] players, int turnIndex) {
+        int playerCount = players.length;
         return players[(turnIndex - 1) % playerCount];
     }
 
