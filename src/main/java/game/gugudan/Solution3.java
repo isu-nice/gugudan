@@ -1,24 +1,31 @@
 package game.gugudan;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Solution3 {
 
+    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+
     public String solution(String region, String[] playerNames, int maxGameCount) {
-        GameRule gameRule;
-
-        if (region.equals("서울")) {
-            gameRule = new SeoulGameRule();
-        } else if (region.equals("부산")) {
-            gameRule = new BusanGameRule();
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 지역");
-        }
-
-        Player[] players = new Player[playerNames.length];
-        for (int i = 0; i < playerNames.length; i++) {
-            players[i] = new Player(playerNames[i]);
-        }
+        GameRule gameRule = selectGameRule(region);
+        Player[] players = createPlayers(playerNames);
 
         return playGame(players, maxGameCount, gameRule);
+    }
+
+    private GameRule selectGameRule(String region) {
+        return switch (region) {
+            case "서울" -> new SeoulGameRule();
+            case "부산" -> new BusanGameRule();
+            default -> throw new IllegalArgumentException("지원하지 않는 지역입니다.");
+        };
+    }
+
+    private Player[] createPlayers(String[] playerNames) {
+        return Arrays.stream(playerNames)
+                .map(Player::new)
+                .toArray(Player[]::new);
     }
 
     private String playGame(Player[] players, int maxGameCount, GameRule gameRule) {
