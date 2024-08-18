@@ -77,20 +77,22 @@ public class Solution3 {
     static class BusanGameRule implements GameRule {
         @Override
         public String do369(int number) {
-            String numberStr = String.valueOf(number);
-
-            int clapCount = 0;
-            for (char ch : numberStr.toCharArray()) {
-                if (ch == '3' || ch == '6' || ch == '9') {
-                    clapCount++;
-                }
-            }
+            int clapCount = computeClapCount(number);
 
             if (clapCount > 0) {
-                return "clap".repeat(clapCount);
+                return CLAP_RESPONSE.repeat(clapCount);
             } else {
-                return numberStr;
+                return String.valueOf(number);
             }
+        }
+
+        private static int computeClapCount(int number) {
+            long clapCount = String.valueOf(number)
+                    .chars()
+                    .mapToObj(ch -> (char) ch)
+                    .filter(CLAP_DIGITS::contains)
+                    .count();
+            return (int) clapCount;
         }
     }
 
