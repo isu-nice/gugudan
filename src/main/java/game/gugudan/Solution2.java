@@ -7,6 +7,7 @@ import java.util.stream.IntStream;
 public class Solution2 {
 
     private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final String CLAP_RESPONSE = "clap";
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
         //playerNames, errorRates 를 사용하여 players 만드는 코드를 작성해주세요.
@@ -30,15 +31,15 @@ public class Solution2 {
         //모두가 정답을 얘기하는경우 maxGameCount까지 게임을 진행
         int playerCount = players.length;
 
-        for (int i = 1; i <= maxGameCount; i++) {
-            Player currentPlayer = getCurrentPlayer(players, i, playerCount);
-            String expectedAnswer = do369(i);
-            String actualAnswer = processPlayerTurn(currentPlayer, i, expectedAnswer, random);
+        for (int index = 1; index <= maxGameCount; index++) {
+            Player currentPlayer = getCurrentPlayer(players, index, playerCount);
+            String expectedAnswer = do369(index);
+            String playerAnswer = processPlayerTurn(currentPlayer, index, expectedAnswer, random);
 
-            buildResult(answer, currentPlayer, actualAnswer);
+            buildResult(answer, currentPlayer, playerAnswer);
 
             // 오답 시 게임 종료
-            if (!expectedAnswer.equals(actualAnswer)) {
+            if (!expectedAnswer.equals(playerAnswer)) {
                 break;
             }
         }
@@ -52,7 +53,7 @@ public class Solution2 {
 
     private String do369(int number) {
         if (contains369(number)) {
-            return "clap";
+            return CLAP_RESPONSE;
         } else {
             return String.valueOf(number);
         }
@@ -87,14 +88,14 @@ public class Solution2 {
         }
 
         public String respond(int number, String expectedAnswer, Random random) {
-            int chance = random.getNextInt();
-            boolean isError = chance < errorRate;
+            int randomChance = random.getNextInt();
+            boolean isIncorrect = randomChance < errorRate;
 
-            if (isError) {
-                return expectedAnswer.equals("clap") ? String.valueOf(number) : "clap";
-            } else {
-                return expectedAnswer;
+            if (isIncorrect) {
+                return expectedAnswer.equals(CLAP_RESPONSE) ? String.valueOf(number) : CLAP_RESPONSE;
             }
+
+            return expectedAnswer;
         }
     }
 
