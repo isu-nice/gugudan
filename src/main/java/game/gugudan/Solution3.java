@@ -107,4 +107,21 @@ public class Solution3 {
             return name;
         }
     }
+
+
+
+
+
+    // main
+    public static void main(String[] args) {
+        // 테스트용
+        String region = "부산";
+        String[] playerNames = {"김김김", "박박박", "최최최", "황황황", "신신신"};
+        int maxGameCount = 336;
+
+        Solution3 solution = new Solution3();
+        String result = solution.solution(region, playerNames, maxGameCount);
+        System.out.println(result);
+    }
+
 }
