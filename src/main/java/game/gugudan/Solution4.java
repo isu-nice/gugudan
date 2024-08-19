@@ -2,9 +2,11 @@ package game.gugudan;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
-public class Solution4 {
+class Solution4 {
 
     private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
     private static final String CLAP_RESPONSE = "clap";
@@ -13,87 +15,79 @@ public class Solution4 {
         //주어진 clapCounter 를 사용해주세요.
         ClapCounter clapCounter = ClapCounter.getInstance();
 
-        GameRunner seoulGame = new GameRunner(playerNames, maxGameCount, new SeoulGameRule(), clapCounter);
-        GameRunner busanGame = new GameRunner(playerNames, maxGameCount, new BusanGameRule(), clapCounter);
+        // ExecutorService 활용 -> 두 개의 게임 동시에 실행
+        ExecutorService executor = Executors.newFixedThreadPool(2);
 
-        Thread seoulThread = new Thread(seoulGame);
-        Thread busanThread = new Thread(busanGame);
+        // 서울, 부산 게임 실행
+        executor.submit(() ->
+                playGame("서울", maxGameCount, clapCounter)
+        );
+        executor.submit(() ->
+                playGame("부산", maxGameCount, clapCounter));
 
-        seoulThread.start();
-        busanThread.start();
+        // ExecutorService 종료 대기
+        executor.shutdown();
 
         try {
-            seoulThread.join();
-            busanThread.join();
+            if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
+                executor.shutdownNow();
+            }
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
 
         return clapCounter.getCount();
     }
 
+    private void playGame(String region, int maxGameCount, ClapCounter clapCounter) {
+        GameRule gameRule = selectGameRule(region);
 
-    static class GameRunner implements Runnable {
-        private String[] playerNames;
-        private int maxGameCount;
-        private GameRule gameRule;
-        private ClapCounter clapCounter;
-
-        public GameRunner(String[] playerNames, int maxGameCount, GameRule gameRule, ClapCounter clapCounter) {
-            this.playerNames = playerNames;
-            this.maxGameCount = maxGameCount;
-            this.gameRule = gameRule;
-            this.clapCounter = clapCounter;
+        for (int index = 1; index <= maxGameCount; index++) {
+            String playerAnswer = gameRule.do369(index);
+            increaseClapCount(playerAnswer, clapCounter);
         }
+    }
 
-        @Override
-        public void run() {
-            int playerCount = playerNames.length;
+    private void increaseClapCount(String result, ClapCounter clapCounter) {
+        int index = 0;
+        while (true) {
+            index = result.indexOf(CLAP_RESPONSE, index);
 
-            for (int i = 1; i <= maxGameCount; i++) {
-                String playerName = playerNames[(i - 1) % playerCount];
-                String result = gameRule.do369(i);
-
-                if (result.contains("clap")) {
-                    int claps = (int) result.chars()
-                            .filter(ch -> ch == 'c').count();
-
-                    clapCounter.increment(claps);
-                }
-
-                System.out.println(playerName + ": " + result);
+            if (index == -1) {
+                break;
             }
+
+            clapCounter.increaseCount();
+
+            index += CLAP_RESPONSE.length();
         }
     }
 
-    /**
-     인스턴스 생성로직을 제외한 내용을 자유롭게 수정하여 구현해주세요. (메소드 추가/수정 가능)
-     이경우 별도로 수동채점이 이루어집니다.
-     */
-    static class ClapCounter {
-        private static ClapCounter clapCounter = new ClapCounter();
-        private AtomicInteger count = new AtomicInteger(0);
-
-        private ClapCounter() {}
-
-        public static ClapCounter getInstance() {
-            return clapCounter;
-        }
-
-        public int getCount() {
-            return count.get();
-        }
-
-        public synchronized void increment(int amount) {
-            count.addAndGet(amount);
-        }
+    private GameRule selectGameRule(String region) {
+        return switch (region) {
+            case "서울" -> new SeoulGameRule();
+            case "부산" -> new BusanGameRule();
+            default -> throw new IllegalArgumentException("지원하지 않는 지역입니다.");
+        };
     }
+
+/*    private Player[] createPlayers(String[] playerNames) {
+        return Arrays.stream(playerNames)
+                .map(Player::new)
+                .toArray(Player[]::new);
+    }
+
+    private Player getCurrentPlayer(Player[] players, int turnIndex) {
+        int playerCount = players.length;
+        return players[(turnIndex - 1) % playerCount];
+    }*/
 
     interface GameRule {
         String do369(int number);
     }
 
-    static class SeoulGameRule implements Solution3.GameRule {
+    static class SeoulGameRule implements GameRule {
         @Override
         public String do369(int number) {
             if (contains369(number)) {
@@ -111,7 +105,7 @@ public class Solution4 {
         }
     }
 
-    static class BusanGameRule implements Solution3.GameRule {
+    static class BusanGameRule implements GameRule {
         @Override
         public String do369(int number) {
             int clapCount = computeClapCount(number);
@@ -143,5 +137,46 @@ public class Solution4 {
         public String getName() {
             return name;
         }
+    }
+}
+
+/**
+ * 인스턴스 생성로직을 제외한 내용을 자유롭게 수정하여 구현해주세요. (메소드 추가/수정 가능)
+ * 이경우 별도로 수동채점이 이루어집니다.
+ */
+class ClapCounter {
+    private static ClapCounter clapCounter = new ClapCounter();
+    private int count = 0;
+
+    private ClapCounter() {
+    }
+
+    public static ClapCounter getInstance() {
+        return clapCounter;
+    }
+
+    public synchronized int getCount() {
+        return count;
+    }
+
+    public synchronized void increaseCount() {
+        count++;
+    }
+}
+
+
+// main
+class Main {
+    public static void main(String[] args) {
+        // 테스트용 데이터 설정
+        String[] playerNames = {"aaa", "bbb", "ccc", "ddd"};
+        int maxGameCount = 33;
+
+        // Solution4 인스턴스화
+        Solution4 solution = new Solution4();
+
+        // solution 메서드 호출 및 결과 출력
+        int clapCount = solution.solution(playerNames, maxGameCount);
+        System.out.println("clap count: " + clapCount);
     }
 }
