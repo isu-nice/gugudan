@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 class Solution4 {
 
@@ -158,7 +159,7 @@ class Solution4 {
  */
 class ClapCounter {
     private static ClapCounter clapCounter = new ClapCounter();
-    private int count = 0;
+    private AtomicInteger count = new AtomicInteger(0);
 
     private ClapCounter() {
     }
@@ -167,12 +168,12 @@ class ClapCounter {
         return clapCounter;
     }
 
-    public synchronized int getCount() {
-        return count;
+    public int getCount() {
+        return count.get();
     }
 
-    public synchronized void increaseCount() {
-        count++;
+    public void increaseCount() {
+        count.incrementAndGet();
     }
 }
 
