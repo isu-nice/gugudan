@@ -11,6 +11,7 @@ class Solution4 {
     private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
     private static final String CLAP_RESPONSE = "clap";
 
+    // TODO: 이거 다 분리, 중간에 확인하는 거 어떻게 처리할 건지 -> 그 로직이 뭐지?
     public int solution(String[] playerNames, int maxGameCount) {
         //주어진 clapCounter 를 사용해주세요.
         ClapCounter clapCounter = ClapCounter.getInstance();
@@ -25,11 +26,20 @@ class Solution4 {
         executor.submit(() ->
                 playGame("부산", maxGameCount, clapCounter));
 
-        // ExecutorService 종료 대기
+        // 실행 중인 모든 Task가 수행되면 종료
         executor.shutdown();
 
         try {
+            /*
+              awaitTermination() -> 새로운 Task가 실행되는 것을 막고
+              일정 시간동안 실행 중인 Task가 완료되기를 기다림
+              일정 시간동안 처리되지 않은 Task는 강제 종료시킴
+             */
             if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
+                /*
+                 shutdownNow() -> 실행 중인 Thread들을 즉시 종료시키려고 하지만
+                 모든 Thread가 동시에 종료되는 것을 보장하지는 않음, 실행되지 않은 Task 반환
+                 */
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
@@ -51,7 +61,7 @@ class Solution4 {
 
     private void increaseClapCount(String result, ClapCounter clapCounter) {
         int index = 0;
-        while (true) {
+        while (true) { // TODO: while(true) 사용 의문 -> while 안에 복잡한 조건 작성할 건지
             index = result.indexOf(CLAP_RESPONSE, index);
 
             if (index == -1) {
@@ -72,6 +82,8 @@ class Solution4 {
         };
     }
 
+    // TODO: Solution3 내용 추가할 건지? -> 아니면 Player 내용 싹 다 삭제
+    //  -> 근데 solution()에 playerNames 있으니까 그냥 냅두자?
 /*    private Player[] createPlayers(String[] playerNames) {
         return Arrays.stream(playerNames)
                 .map(Player::new)
@@ -172,11 +184,9 @@ class Main {
         String[] playerNames = {"aaa", "bbb", "ccc", "ddd"};
         int maxGameCount = 33;
 
-        // Solution4 인스턴스화
         Solution4 solution = new Solution4();
-
-        // solution 메서드 호출 및 결과 출력
         int clapCount = solution.solution(playerNames, maxGameCount);
+
         System.out.println("clap count: " + clapCount);
     }
 }
