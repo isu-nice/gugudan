@@ -44,15 +44,8 @@ class Solution4 {
 
     private void increaseClapCount(String result, ClapCounter clapCounter) {
         int index = 0;
-        while (true) { // TODO: while(true) 사용 의문 -> while 안에 복잡한 조건 작성할 건지
-            index = result.indexOf(CLAP_RESPONSE, index);
-
-            if (index == -1) {
-                break;
-            }
-
+        while ((index = result.indexOf(CLAP_RESPONSE, index)) != -1) {
             clapCounter.increaseCount();
-
             index += CLAP_RESPONSE.length();
         }
     }
