@@ -30,7 +30,7 @@ class Solution4 {
         executor.submit(() -> playGame("부산", maxGameCount, counter));
 
         // 모든 스레드가 완료될 때까지 대기
-        shutdownExecutorService(executor);
+        awaitTermination(executor);
     }
 
     private void playGame(String region, int maxGameCount, ClapCounter clapCounter) {
@@ -50,7 +50,7 @@ class Solution4 {
         }
     }
 
-    private void shutdownExecutorService(ExecutorService executor) {
+    private void awaitTermination(ExecutorService executor) {
         executor.shutdown();
 
         try {
