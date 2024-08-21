@@ -16,38 +16,21 @@ class Solution4 {
         //주어진 clapCounter 를 사용해주세요.
         ClapCounter clapCounter = ClapCounter.getInstance();
 
-        // ExecutorService 활용 -> 두 개의 게임 동시에 실행
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-
-        // 서울, 부산 게임 실행
-        executor.submit(() ->
-                playGame("서울", maxGameCount, clapCounter)
-        );
-        executor.submit(() ->
-                playGame("부산", maxGameCount, clapCounter));
-
-        // 실행 중인 모든 Task가 수행되면 종료
-        executor.shutdown();
-
-        try {
-            /*
-              awaitTermination() -> 새로운 Task가 실행되는 것을 막고
-              일정 시간동안 실행 중인 Task가 완료되기를 기다림
-              일정 시간동안 처리되지 않은 Task는 강제 종료시킴
-             */
-            if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
-                /*
-                 shutdownNow() -> 실행 중인 Thread들을 즉시 종료시키려고 하지만
-                 모든 Thread가 동시에 종료되는 것을 보장하지는 않음, 실행되지 않은 Task 반환
-                 */
-                executor.shutdownNow();
-            }
-        } catch (InterruptedException e) {
-            executor.shutdownNow();
-            Thread.currentThread().interrupt();
-        }
+        // 두 게임 동시에 실행
+        executeGames(maxGameCount, clapCounter);
 
         return clapCounter.getCount();
+    }
+
+    private void executeGames(int maxGameCount, ClapCounter counter) {
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+
+        // 각 지역 게임 실행
+        executor.submit(() -> playGame("서울", maxGameCount, counter));
+        executor.submit(() -> playGame("부산", maxGameCount, counter));
+
+        // 모든 스레드가 완료될 때까지 대기
+        shutdownExecutorService(executor);
     }
 
     private void playGame(String region, int maxGameCount, ClapCounter clapCounter) {
@@ -71,6 +54,28 @@ class Solution4 {
             clapCounter.increaseCount();
 
             index += CLAP_RESPONSE.length();
+        }
+    }
+
+    private void shutdownExecutorService(ExecutorService executor) {
+        executor.shutdown();
+
+        try {
+            /*
+              awaitTermination() -> 새로운 Task가 실행되는 것을 막고
+              일정 시간동안 실행 중인 Task가 완료되기를 기다림
+              일정 시간동안 처리되지 않은 Task는 강제 종료시킴
+             */
+            if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
+                executor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            /*
+             shutdownNow() -> 실행 중인 Thread들을 즉시 종료시키려고 하지만
+             모든 Thread가 동시에 종료되는 것을 보장하지는 않음, 실행되지 않은 Task 반환
+            */
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
         }
     }
 
