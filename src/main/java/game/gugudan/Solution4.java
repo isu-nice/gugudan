@@ -12,7 +12,6 @@ class Solution4 {
     private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
     private static final String CLAP_RESPONSE = "clap";
 
-    // TODO: 이거 다 분리, 중간에 확인하는 거 어떻게 처리할 건지 -> 그 로직이 뭐지?
     public int solution(String[] playerNames, int maxGameCount) {
         //주어진 clapCounter 를 사용해주세요.
         ClapCounter clapCounter = ClapCounter.getInstance();
@@ -83,19 +82,6 @@ class Solution4 {
         };
     }
 
-    // TODO: Solution3 내용 추가할 건지? -> 아니면 Player 내용 싹 다 삭제
-    //  -> 근데 solution()에 playerNames 있으니까 그냥 냅두자?
-/*    private Player[] createPlayers(String[] playerNames) {
-        return Arrays.stream(playerNames)
-                .map(Player::new)
-                .toArray(Player[]::new);
-    }
-
-    private Player getCurrentPlayer(Player[] players, int turnIndex) {
-        int playerCount = players.length;
-        return players[(turnIndex - 1) % playerCount];
-    }*/
-
     interface GameRule {
         String do369(int number);
     }
@@ -137,18 +123,6 @@ class Solution4 {
                     .filter(CLAP_DIGITS::contains)
                     .count();
             return (int) clapCount;
-        }
-    }
-
-    static class Player {
-        private String name;
-
-        public Player(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
         }
     }
 }
