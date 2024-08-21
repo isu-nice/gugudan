@@ -1,11 +1,11 @@
 package game.gugudan;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 class Solution1 {
 
-    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final Set<Character> CLAP_DIGITS = new HashSet<>(Set.of('3', '6', '9'));
 
     /**
      * do369 함수를 이용하여 playNames의 유저가 돌아가면서,
