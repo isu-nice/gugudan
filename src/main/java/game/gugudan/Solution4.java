@@ -54,19 +54,10 @@ class Solution4 {
         executor.shutdown();
 
         try {
-            /*
-              awaitTermination() -> 새로운 Task가 실행되는 것을 막고
-              일정 시간동안 실행 중인 Task가 완료되기를 기다림
-              일정 시간동안 처리되지 않은 Task는 강제 종료시킴
-             */
             if (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
                 executor.shutdownNow();
             }
         } catch (InterruptedException e) {
-            /*
-             shutdownNow() -> 실행 중인 Thread들을 즉시 종료시키려고 하지만
-             모든 Thread가 동시에 종료되는 것을 보장하지는 않음, 실행되지 않은 Task 반환
-            */
             executor.shutdownNow();
             Thread.currentThread().interrupt();
         }
