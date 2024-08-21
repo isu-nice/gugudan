@@ -1,14 +1,11 @@
 package game.gugudan;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class Solution2 {
 
-    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final Set<Character> CLAP_DIGITS = new HashSet<>(Set.of('3', '6', '9'));
     private static final String CLAP_RESPONSE = "clap";
 
     public String solution(String[] playerNames, int[] errorRates, int maxGameCount, int[] randomValues) {
@@ -125,8 +122,6 @@ public class Solution2 {
             return randomValues[currentCount++];
         }
     }
-
-
 
 
     // main
