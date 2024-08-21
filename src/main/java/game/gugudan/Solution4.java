@@ -1,7 +1,7 @@
 package game.gugudan;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 class Solution4 {
 
-    private static final List<Character> CLAP_DIGITS = Arrays.asList('3', '6', '9');
+    private static final Set<Character> CLAP_DIGITS = new HashSet<>(Set.of('3', '6', '9'));
     private static final String CLAP_RESPONSE = "clap";
 
     public int solution(String[] playerNames, int maxGameCount) {
